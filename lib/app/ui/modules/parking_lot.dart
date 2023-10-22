@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
 import 'package:parking/app/ui/modules/park_car.dart';
+import 'package:parking/app/ui/modules/parking_floor.dart';
 
 import '../../data/service/bloc/parking/parking_bloc.dart';
-import '../../util/common_method.dart';
 import '../../widget/loaders.dart';
 
 class ParkingLotPage extends StatefulWidget {
@@ -27,12 +27,13 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
         WidgetsBinding.instance.addPostFrameCallback(
             (_) => loadingIndicator(context, "getting parking lot"));
       } else if (state is GetParkingLotSuccessState) {
+        updateParkingLot(widget.parkingLot, state.availableParkingSlotDto);
         Navigator.of(context, rootNavigator: true).pop();
         parkingCard(context, (state.availableParkingSlotDto));
       } else if (state is GetParkingLotErrorState) {
         Navigator.of(context, rootNavigator: true).pop();
-        CommonMethods.showToast(
-            context: context, text: state.error, seconds: 2);
+        WidgetsBinding.instance.addPostFrameCallback(
+            (_) => messageDialog(context, "Failed", state.error));
       }
     }, buildWhen: (prev, curr) {
       return curr is GetParkingLotSuccessState;
@@ -55,28 +56,22 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
                       itemCount: widget.parkingLot.floors.length,
                       itemBuilder: (context, index) {
                         return makeListTile(
-                            context, widget.parkingLot.floors[index]);
+                            context,
+                            widget.parkingLot.floors[index],
+                            widget.parkingLot.id);
                       }),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
                       bottom:
-                          200.0), // Adjust the distance from the bottom as needed
+                          100.0), // Adjust the distance from the bottom as needed
                   child: ElevatedButton(
                     onPressed: () {
-                      parkingCard(
-                          context,
-                          AvailableParkingSlotDto(
-                              slotId: 1,
-                              slotType: " 1",
-                              slotNumber: 1,
-                              floorId: 1,
-                              floorName: " 1"));
-                      // parkCar(context, (String a) {
-                      //   BlocProvider.of<ParkingLotBloc>(context).add(
-                      //       GetParkingSlotEvent(
-                      //           parkingId: widget.parkingLot.id, size: a!));
-                      // });
+                      parkCar(context, (String a) {
+                        BlocProvider.of<ParkingLotBloc>(context).add(
+                            GetParkingSlotEvent(
+                                parkingId: widget.parkingLot.id, size: a!));
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -96,17 +91,27 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
             )));
   }
 
-  Widget makeListTile(BuildContext context, FloorResponseDto floor) {
+  Widget makeListTile(
+      BuildContext context, FloorResponseDto floor, int parkingId) {
     return ListTile(
       title: Text(floor.name),
-      subtitle: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: _buildRowList(floor.parkingSlots)),
-    );
+        subtitle: _buildDataTable(floor.parkingSlots),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ParkingFloorPage(
+                      parkingFloor: floor,
+                      parkingId: parkingId))).then((value) {
+            setState(() {
+              widget.parkingLot.floors = FloorResponseDto.fromJsonArray(
+                  widget.parkingLot.floors.map((e) => e.toMap()).toList());
+            });
+          });
+        });
   }
 
-  List<Widget> _buildRowList(List<ParkingSlotDto> parkingSlots) {
-    List<Widget> slotWidget = [];
+  Widget _buildDataTable(List<ParkingSlotDto> parkingSlots) {
     int totalSmallSlots = 0;
     int availableSmallSlots = 0;
     int totalMediumSlots = 0;
@@ -131,13 +136,59 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
         if (!parkingSlots[i].occupied) availableXLargeSlots++;
       }
     }
-
-    slotWidget.add(Text("s: $availableSmallSlots/$totalSmallSlots"));
-    slotWidget.add(Text("m: $availableMediumSlots/$totalMediumSlots"));
-    slotWidget.add(Text("l: $availableLargeSlots/$totalLargeSlots"));
-    slotWidget.add(Text("xl: $availableXLargeSlots/$totalXLargeSlots"));
-
-    return slotWidget;
+    return Center(
+      child: DataTable(
+        columns: const <DataColumn>[
+          DataColumn(
+            label: Text('Slot Type'),
+          ),
+          DataColumn(
+            label: Text('Available Slots'),
+          ),
+          DataColumn(
+            label: Text('Total Slots'),
+          ),
+        ],
+        rows: <DataRow>[
+          DataRow(
+            cells: <DataCell>[
+              const DataCell(
+                  Text('Small', style: TextStyle(color: Colors.orange))),
+              DataCell(Text("$availableSmallSlots",
+                  style: const TextStyle(color: Colors.blue))),
+              DataCell(Text("$totalSmallSlots")),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              const DataCell(
+                  Text('Medium', style: TextStyle(color: Colors.orange))),
+              DataCell(Text("$availableMediumSlots",
+                  style: const TextStyle(color: Colors.blue))),
+              DataCell(Text("$totalMediumSlots")),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              const DataCell(
+                  Text('Large', style: TextStyle(color: Colors.orange))),
+              DataCell(Text("$availableLargeSlots",
+                  style: const TextStyle(color: Colors.blue))),
+              DataCell(Text("$totalLargeSlots")),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              const DataCell(
+                  Text('X-Large', style: TextStyle(color: Colors.orange))),
+              DataCell(Text("$availableXLargeSlots",
+                  style: const TextStyle(color: Colors.blue))),
+              DataCell(Text("$totalXLargeSlots")),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   void parkCar(BuildContext context, Function(String a) callBack) {
@@ -230,5 +281,18 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
         ],
       ),
     );
+  }
+
+  void updateParkingLot(ParkingLotResponseDto parkingLot,
+      AvailableParkingSlotDto availableParkingSlotDto) {
+    setState(() {
+      var x = parkingLot.floors
+          .where((element) => element.id == availableParkingSlotDto.floorId)
+          .first;
+      var y = x.parkingSlots
+          .where((element) => element.id == availableParkingSlotDto.slotId)
+          .first;
+      y.occupied = true;
+    });
   }
 }

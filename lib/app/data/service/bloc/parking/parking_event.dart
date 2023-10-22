@@ -41,11 +41,11 @@ class GetParkingSlotEvent extends ParkingLotEvent {
   List<Object> get props => [parkingId, size];
 }
 
-class ReleaseParkingSLotEvent extends ParkingLotEvent {
+class ReleaseParkingSlotEvent extends ParkingLotEvent {
   final int parkingId;
   final int slotId;
 
-  const ReleaseParkingSLotEvent(
+  const ReleaseParkingSlotEvent(
       {required this.parkingId, required this.slotId});
 
   @override

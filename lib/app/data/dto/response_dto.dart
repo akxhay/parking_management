@@ -83,13 +83,17 @@ class ParkingLotResponseDto {
 }
 
 class FloorResponseDto {
-  FloorResponseDto({required this.name, required this.parkingSlots});
+  FloorResponseDto(
+      {required this.id, required this.name, required this.parkingSlots});
+
+  int id;
 
   String name;
   List<ParkingSlotDto> parkingSlots;
 
   factory FloorResponseDto.fromJson(Map<String, dynamic> json) {
     return FloorResponseDto(
+        id: json["id"],
         name: json["name"],
         parkingSlots: json["parkingSlots"] != null
             ? ParkingSlotDto.fromJsonArray(json["parkingSlots"])
@@ -106,6 +110,7 @@ class FloorResponseDto {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = HashMap();
+    map["id"] = id;
     map["name"] = name;
     map["parkingSlots"] = parkingSlots.map((e) => e.toMap()).toList();
 
@@ -114,22 +119,25 @@ class FloorResponseDto {
 
   @override
   String toString() {
-    return 'FloorRequestDto{name: $name, parkingSlots: $parkingSlots}';
+    return 'FloorRequestDto{id: $id,name: $name, parkingSlots: $parkingSlots}';
   }
 }
 
 class ParkingSlotDto {
-  ParkingSlotDto(
-      {required this.slotType,
+  ParkingSlotDto({
+    required this.id,
+    required this.slotType,
       required this.slotNumber,
       required this.occupied});
 
+  int id;
   String slotType;
   int slotNumber;
   bool occupied;
 
   factory ParkingSlotDto.fromJson(Map<String, dynamic> json) {
     return ParkingSlotDto(
+        id: json["id"],
         slotType: json["slotType"],
         slotNumber: json["slotNumber"],
         occupied: json["occupied"]);
@@ -137,14 +145,15 @@ class ParkingSlotDto {
 
   @override
   String toString() {
-    return 'ParkingSlotDto{slotType: $slotType, slotType: $slotType, occupied: $occupied}';
+    return 'ParkingSlotDto{id: $id,slotType: $slotType, slotType: $slotType, occupied: $occupied}';
   }
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = HashMap();
+    map["id"] = id;
     map["slotType"] = slotType;
     map["slotNumber"] = slotNumber;
-    map["isOccuoccupiedpied"] = occupied;
+    map["occupied"] = occupied;
     return map;
   }
 

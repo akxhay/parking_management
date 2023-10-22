@@ -120,7 +120,6 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
         if (response.statusCode == HttpStatus.ok) {
           final Map<String, dynamic> map =
               convert.jsonDecode(response.body) as Map<String, dynamic>;
-
           if (map.isNotEmpty) {
             log("emitting loaded state");
             emit(GetParkingLotSuccessState(
@@ -131,7 +130,7 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
           }
         } else if (response.statusCode == HttpStatus.notFound) {
           log("emitting error state 2");
-          emit(const GetParkingLotErrorState("content not found"));
+          emit(const GetParkingLotErrorState("Parking slot not available"));
         } else {
           log("emitting error state 3");
           emit(const GetParkingLotErrorState("Could not save items"));
@@ -140,18 +139,16 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
         log("emitting error state 4$e");
         emit(GetParkingLotErrorState(e.toString()));
       }
-    } else if (event is ReleaseParkingSLotEvent) {
+    } else if (event is ReleaseParkingSlotEvent) {
       log("emitting loading state");
       emit(ReleaseParkingLotLoadingState());
       try {
         var response =
-            await _parkingRepository.getSlot(event.parkingId, event.slotId);
+            await _parkingRepository.releaseSlot(event.parkingId, event.slotId);
         if (response.statusCode == HttpStatus.ok) {
-          final Map<String, dynamic> dynamicMap =
-              convert.jsonDecode(response.body) as Map<String, dynamic>;
-          if (dynamicMap.isNotEmpty) {
+          if (response.body.isNotEmpty) {
             log("emitting loaded state");
-            emit(ReleaseParkingLotSuccessState(dynamicMap["message"]));
+            emit(ReleaseParkingLotSuccessState(response.body));
           } else {
             log("emitting error state 1");
             emit(const ReleaseParkingLotErrorState("Item not found"));

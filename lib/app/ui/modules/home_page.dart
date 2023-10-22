@@ -37,7 +37,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(title: const Text("Home")),
+        appBar: AppBar(title: const Text("Home"), actions: <Widget>[
+          IconButton(
+              icon: const Icon(
+                Icons.refresh,
+                color: Colors.blue,
+              ),
+              onPressed: () {
+                context
+                    .read<ParkingLotBloc>()
+                    .add(const FetchParkingLotsEvent(clear: true));
+              }),
+        ]),
         backgroundColor: Colors.white,
         floatingActionButton: parkManagementFloats(context),
         body: BlocConsumer<ParkingLotBloc, ParkingLotState>(
