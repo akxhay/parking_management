@@ -48,10 +48,10 @@ class CreateParkingLotLoadingState extends ParkingLotState {
 }
 
 class CreateParkingLotSuccessState extends ParkingLotState {
-  final String message;
-  const CreateParkingLotSuccessState(this.message);
+  final ParkingLotResponseDto parkingLotResponseDto;
+  const CreateParkingLotSuccessState(this.parkingLotResponseDto);
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [parkingLotResponseDto];
 }
 
 class CreateParkingLotErrorState extends ParkingLotState {

@@ -34,13 +34,13 @@ class FloorRequestDto {
       required this.smallSlots,
       required this.mediumSlots,
       required this.largeSlots,
-      required this.xLargeSlots});
+      required this.xlargeSlots});
 
   String name;
   int smallSlots;
   int mediumSlots;
   int largeSlots;
-  int xLargeSlots;
+  int xlargeSlots;
 
   factory FloorRequestDto.fromJson(Map<String, dynamic> json) {
     return FloorRequestDto(
@@ -48,7 +48,7 @@ class FloorRequestDto {
       smallSlots: json["smallSlots"],
       mediumSlots: json["mediumSlots"],
       largeSlots: json["largeSlots"],
-      xLargeSlots: json["xLargeSlots"],
+      xlargeSlots: json["xlargeSlots"],
     );
   }
 
@@ -66,14 +66,14 @@ class FloorRequestDto {
     map["smallSlots"] = smallSlots;
     map["mediumSlots"] = mediumSlots;
     map["largeSlots"] = largeSlots;
-    map["xLargeSlots"] = xLargeSlots;
+    map["xlargeSlots"] = xlargeSlots;
 
     return map;
   }
 
   @override
   String toString() {
-    return 'FloorRequestDto{name: $name, smallSlots: $smallSlots, mediumSlots: $mediumSlots, largeSlots: $largeSlots, xLargeSlots: $xLargeSlots}';
+    return 'FloorRequestDto{name: $name, smallSlots: $smallSlots, mediumSlots: $mediumSlots, largeSlots: $largeSlots, xlargeSlots: $xlargeSlots}';
   }
 }
 

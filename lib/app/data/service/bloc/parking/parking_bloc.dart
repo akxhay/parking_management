@@ -90,12 +90,13 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
       try {
         var response =
             await _parkingRepository.createItem(event.parkingLotRequestDto);
-        if (response.statusCode == HttpStatus.created) {
+        if (response.statusCode == HttpStatus.ok) {
           final Map<String, dynamic> dynamicMap =
               convert.jsonDecode(response.body) as Map<String, dynamic>;
           if (dynamicMap.isNotEmpty) {
             log("emitting loaded state");
-            emit(CreateParkingLotSuccessState(dynamicMap["message"]));
+            emit(CreateParkingLotSuccessState(
+                ParkingLotResponseDto.fromJson(dynamicMap)));
           } else {
             log("emitting error state 1");
             emit(const CreateParkingLotErrorState("Item not found"));

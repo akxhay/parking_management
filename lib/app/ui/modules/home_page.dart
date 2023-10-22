@@ -1,16 +1,13 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:parking/app/data/dto/request_dto.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
-import 'package:parking/app/ui/modules/add_new_item.dart';
 import 'package:parking/app/ui/modules/parking_lot.dart';
 import 'package:parking/app/widget/loaders.dart';
 
 import '../../data/service/bloc/parking/parking_bloc.dart';
 import '../../util/common_method.dart';
+import 'add_new_lot.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -22,7 +19,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final ScrollController _scrollController = ScrollController();
   int? deleteId;
-  Set<int> deletedSet = HashSet();
 
   @override
   void initState() {
@@ -62,7 +58,12 @@ class _MyHomePageState extends State<MyHomePage> {
             CommonMethods.showToast(
                 context: context, text: state.message, seconds: 2);
             setState(() {
-              deletedSet.add(deleteId!);
+              setState(() {
+                context
+                    .read<ParkingLotBloc>()
+                    .parkingLots
+                    .removeWhere((item) => item.id == deleteId);
+              });
               deleteId = null;
             });
           } else if (state is DeleteParkingLotErrorState) {
@@ -199,38 +200,31 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildParkingLot(ParkingLotResponseDto parkingLot) {
-    var deleted = deletedSet.contains(parkingLot.id);
     return Column(
       children: <Widget>[
         ListTile(
           title: Text(
-            !deleted ? parkingLot.name : "Deleted : ${parkingLot.name}",
-            style: TextStyle(
+            parkingLot.name,
+            style: const TextStyle(
               fontSize: 13.0,
-              color: !deleted ? Colors.blue : Colors.red,
+              color: Colors.blue,
             ),
             overflow: TextOverflow.visible,
             maxLines: 1,
           ),
-          onTap: () => !deleted
-              ? Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ParkingLotPage(
-                        parkingLot: parkingLot,
-                      )))
-              : CommonMethods.showToast(
-                  context: context,
-                  text: "${parkingLot.name} has been deleted"),
-          trailing: !deleted
-              ? IconButton(
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ParkingLotPage(
+                    parkingLot: parkingLot,
+                  ))),
+          trailing: IconButton(
+            icon: const Icon(
+              Icons.delete,
+              color: Colors.red,
                   ),
                   onPressed: () {
                     deleteItem(context, parkingLot.id);
                   },
-                )
-              : null,
+          ),
         ),
         const Divider(
           // Add a border below the ListTile
@@ -297,7 +291,19 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget addFloat(MaterialColor color) {
     return FloatingActionButton(
       onPressed: () {
-        createItem(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AddNewParkingLotPage(
+                      callback: (ParkingLotResponseDto e) {
+                        setState(() {
+                          context
+                              .read<ParkingLotBloc>()
+                              .parkingLots
+                              .insert(0, e);
+                        });
+                      },
+                    )));
       },
       tooltip: 'Create new',
       heroTag: null,
@@ -306,57 +312,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void createItem(BuildContext context) {
-    final width = MediaQuery.of(context).size.width * 0.9;
-    final height = MediaQuery.of(context).size.height * 0.7;
-
-    showGeneralDialog(
-        context: context,
-        barrierLabel: "Barrier",
-        barrierDismissible: true,
-        barrierColor: Colors.black.withOpacity(0.5),
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (context, anim1, anim2) {
-          return Center(
-            child: Material(
-                elevation: 10.0,
-                borderRadius: BorderRadius.circular(15),
-                child: Container(
-                    width: width,
-                    height: height,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        const Text(
-                          'Add dummy parking',
-                          style: TextStyle(
-                            fontSize: 24.0, // Adjust the font size as needed
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        const Divider(
-                          height: 1,
-                          color: Colors.blue,
-                        ),
-                        CreateNewItemView(
-                          callback: (DummyDto? dummyDto) {
-                            print(dummyDto.toString());
-                          },
-                        ),
-                      ]),
-                    ))),
-          );
-        }).then((_) {});
-  }
 
   @override
   void dispose() {

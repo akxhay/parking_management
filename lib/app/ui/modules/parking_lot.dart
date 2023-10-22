@@ -10,6 +10,7 @@ import '../../widget/loaders.dart';
 class ParkingLotPage extends StatefulWidget {
   const ParkingLotPage({super.key, required this.parkingLot});
 
+
   final ParkingLotResponseDto parkingLot;
 
   @override
