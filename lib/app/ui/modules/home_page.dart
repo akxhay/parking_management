@@ -1,14 +1,15 @@
 import 'dart:collection';
 
-import 'package:parking/app/data/dto/request_dto.dart';
-import 'package:parking/app/data/dto/response_dto.dart';
-import 'package:parking/app/data/service/bloc/documents_bloc/parking_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:parking/app/data/dto/request_dto.dart';
+import 'package:parking/app/data/dto/response_dto.dart';
 import 'package:parking/app/ui/modules/add_new_item.dart';
 import 'package:parking/app/ui/modules/parking_lot.dart';
 import 'package:parking/app/widget/loaders.dart';
+
+import '../../data/service/bloc/parking/parking_bloc.dart';
 import '../../util/common_method.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -36,16 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(title: const Text("Home"), actions: <Widget>[
-          IconButton(
-              icon: const Icon(
-                Icons.send_to_mobile,
-                color: Colors.blue,
-              ),
-              onPressed: () {
-                CommonMethods.showToast(context: context, text: "akshay");
-              }),
-        ]),
+        appBar: AppBar(title: const Text("Home")),
         backgroundColor: Colors.white,
         floatingActionButton: parkManagementFloats(context),
         body: BlocConsumer<ParkingLotBloc, ParkingLotState>(

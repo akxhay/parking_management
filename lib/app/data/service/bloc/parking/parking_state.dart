@@ -60,3 +60,49 @@ class CreateParkingLotErrorState extends ParkingLotState {
   @override
   List<Object?> get props => [error];
 }
+
+class GetParkingLotLoadingState extends ParkingLotState {
+  @override
+  List<Object> get props => [];
+}
+
+class GetParkingLotSuccessState extends ParkingLotState {
+  final AvailableParkingSlotDto availableParkingSlotDto;
+
+  const GetParkingLotSuccessState(this.availableParkingSlotDto);
+
+  @override
+  List<Object?> get props => [availableParkingSlotDto];
+}
+
+class GetParkingLotErrorState extends ParkingLotState {
+  final String error;
+
+  const GetParkingLotErrorState(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}
+
+class ReleaseParkingLotLoadingState extends ParkingLotState {
+  @override
+  List<Object> get props => [];
+}
+
+class ReleaseParkingLotSuccessState extends ParkingLotState {
+  final String message;
+
+  const ReleaseParkingLotSuccessState(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ReleaseParkingLotErrorState extends ParkingLotState {
+  final String error;
+
+  const ReleaseParkingLotErrorState(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}

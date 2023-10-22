@@ -12,7 +12,6 @@ import 'package:parking/app/data/dto/response_dto.dart';
 import '../../../dao/parking_repository.dart';
 
 part 'parking_event.dart';
-
 part 'parking_state.dart';
 
 class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
@@ -111,6 +110,62 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
       } catch (e) {
         log("emitting error state 4$e");
         emit(CreateParkingLotErrorState(e.toString()));
+      }
+    } else if (event is GetParkingSlotEvent) {
+      log("emitting loading state");
+      emit(GetParkingLotLoadingState());
+      try {
+        var response =
+            await _parkingRepository.getSlot(event.parkingId, event.size);
+        if (response.statusCode == HttpStatus.ok) {
+          final Map<String, dynamic> map =
+              convert.jsonDecode(response.body) as Map<String, dynamic>;
+
+          if (map.isNotEmpty) {
+            log("emitting loaded state");
+            emit(GetParkingLotSuccessState(
+                AvailableParkingSlotDto.fromJson(map)));
+          } else {
+            log("emitting error state 1");
+            emit(const GetParkingLotErrorState("Item not found"));
+          }
+        } else if (response.statusCode == HttpStatus.notFound) {
+          log("emitting error state 2");
+          emit(const GetParkingLotErrorState("content not found"));
+        } else {
+          log("emitting error state 3");
+          emit(const GetParkingLotErrorState("Could not save items"));
+        }
+      } catch (e) {
+        log("emitting error state 4$e");
+        emit(GetParkingLotErrorState(e.toString()));
+      }
+    } else if (event is ReleaseParkingSLotEvent) {
+      log("emitting loading state");
+      emit(ReleaseParkingLotLoadingState());
+      try {
+        var response =
+            await _parkingRepository.getSlot(event.parkingId, event.slotId);
+        if (response.statusCode == HttpStatus.ok) {
+          final Map<String, dynamic> dynamicMap =
+              convert.jsonDecode(response.body) as Map<String, dynamic>;
+          if (dynamicMap.isNotEmpty) {
+            log("emitting loaded state");
+            emit(ReleaseParkingLotSuccessState(dynamicMap["message"]));
+          } else {
+            log("emitting error state 1");
+            emit(const ReleaseParkingLotErrorState("Item not found"));
+          }
+        } else if (response.statusCode == HttpStatus.notFound) {
+          log("emitting error state 2");
+          emit(const ReleaseParkingLotErrorState("content not found"));
+        } else {
+          log("emitting error state 3");
+          emit(const ReleaseParkingLotErrorState("Could not save items"));
+        }
+      } catch (e) {
+        log("emitting error state 4$e");
+        emit(ReleaseParkingLotErrorState(e.toString()));
       }
     }
   }

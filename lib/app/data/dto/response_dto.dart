@@ -156,3 +156,42 @@ class ParkingSlotDto {
     return entities;
   }
 }
+
+class AvailableParkingSlotDto {
+  AvailableParkingSlotDto(
+      {required this.slotId,
+      required this.slotType,
+      required this.slotNumber,
+      required this.floorId,
+      required this.floorName});
+
+  int slotId;
+  String slotType;
+  int slotNumber;
+  int floorId;
+  String floorName;
+
+  factory AvailableParkingSlotDto.fromJson(Map<String, dynamic> json) {
+    return AvailableParkingSlotDto(
+        slotId: json["slotId"],
+        slotType: json["slotType"],
+        slotNumber: json["slotNumber"],
+        floorId: json["floorId"],
+        floorName: json["floorName"]);
+  }
+
+  @override
+  String toString() {
+    return 'AvailableParkingSlotDto{slotId: $slotId, slotType: $slotType, slotNumber: $slotNumber, floorId: $floorId, floorName: $floorName}';
+  }
+
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = HashMap();
+    map["slotId"] = slotId;
+    map["slotType"] = slotType;
+    map["slotNumber"] = slotNumber;
+    map["floorId"] = floorId;
+    map["floorName"] = floorName;
+    return map;
+  }
+}
