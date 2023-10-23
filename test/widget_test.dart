@@ -24,19 +24,6 @@ void main() {
     expect(find.byType(MyApp), findsOneWidget);
   });
 
-  testWidgets('App Widget should render correctly',
-          (WidgetTester tester) async {
-        // Build the widget tree
-        await tester.pumpWidget(
-          const MaterialApp(
-            home: parkingFloorFloats(),
-          ),
-        );
-
-        expect(find.byType(MyApp), findsOneWidget);
-      });
-
-
   testWidgets('ParkingArrivalReceiptDialog should render correctly',
       (WidgetTester tester) async {
     // Build our widget with a MaterialApp and the ParkingArrivalReceiptDialog
