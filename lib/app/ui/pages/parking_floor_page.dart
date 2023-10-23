@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:parking/app/data/constants/generic_constants.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
 import 'package:parking/app/util/common_method.dart';
 
@@ -67,70 +68,68 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
     final double screenWidth = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(title: Text(widget.parkingFloor.name)),
-        backgroundColor: Colors.white,
-        body: Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 10.0, 0.0, 0.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  for (var slotType in map.keys)
-                    Column(
-                      children: <Widget>[
-                        Text(
-                          'Slot: $slotType',
-                          style: const TextStyle(
-                              fontSize: 15.0, fontWeight: FontWeight.bold),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: (screenWidth / 50).floor(),
-                              crossAxisSpacing: 2.0,
-                              mainAxisSpacing: 2.0,
-                            ),
-                            itemCount: map[slotType]!.length,
-                            itemBuilder: (context, index) {
-                              String slotNumber =
-                                  map[slotType]![index].slotNumber.toString();
-                              bool occupied = map[slotType]![index].occupied;
+      key: _scaffoldKey,
+      appBar: AppBar(title: Text(widget.parkingFloor.name)),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(8.0, 10.0, 0.0, 0.0),
+        child: Column(
+          children: <Widget>[
+            for (var slotType in map.keys)
+              ExpansionTile(
+                initiallyExpanded: false, // Set to true if you want them initially expanded
+                title: Text(
+                  'Car size : ${GenericConstants.carTypes[slotType]}',
+                  style: const TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                children: [
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: (screenWidth / 50).floor(),
+                      crossAxisSpacing: 2.0,
+                      mainAxisSpacing: 2.0,
+                    ),
+                    itemCount: map[slotType]!.length,
+                    itemBuilder: (context, index) {
+                      String slotNumber = map[slotType]![index].slotNumber.toString();
+                      bool occupied = map[slotType]![index].occupied;
 
-                              return Card(
-                                color: occupied ? Colors.red : Colors.white,
-                                child: TextButton(
-                                  onPressed: () {
-                                    if (!occupied) {
-                                      CommonMethods.showToast(
-                                          context: context,
-                                          text: "This slot is already free");
-                                    } else {
-                                      releaseSlot(
-                                          context, map[slotType]![index].id);
-                                    }
-                                  },
-                                  child: Text(
-                                    slotNumber,
-                                    style: TextStyle(
-                                      color:
-                                          occupied ? Colors.white : Colors.blue,
-                                    ),
-                                  ),
-                                ),
+                      return Card(
+                        color: occupied ? Colors.red : Colors.white,
+                        child: TextButton(
+                          onPressed: () {
+                            if (!occupied) {
+                              CommonMethods.showToast(
+                                context: context,
+                                text: "This slot is already free",
                               );
-                            },
+                            } else {
+                              releaseSlot(context, map[slotType]![index].id);
+                            }
+                          },
+                          child: Text(
+                            slotNumber,
+                            style: TextStyle(
+                              color: occupied ? Colors.white : Colors.blue,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
+                      );
+                    },
+                  ),
                 ],
               ),
-            )));
+          ],
+        ),
+      ),
+    );
   }
+
 
   void releaseSlot(BuildContext context, int slotId) {
     showDialog<String>(
