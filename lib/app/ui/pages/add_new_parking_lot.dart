@@ -5,12 +5,11 @@ import 'package:parking/app/data/dto/request_dto.dart';
 import '../../data/dto/response_dto.dart';
 import '../../data/service/bloc/parking/parking_bloc.dart';
 import '../../util/common_method.dart';
-import '../../util/edit_text_box.dart';
-import '../../util/edit_text_box_number.dart';
-import '../../widget/loaders.dart';
+import '../widget/edit_text_box.dart';
+import '../widget/edit_text_box_number.dart';
 
 class AddNewParkingLotPage extends StatefulWidget {
-  const AddNewParkingLotPage({super.key, required this.callback});
+  const AddNewParkingLotPage({Key? key, required this.callback}) : super(key: key);
 
   final Function(ParkingLotResponseDto) callback;
 
@@ -19,66 +18,81 @@ class AddNewParkingLotPage extends StatefulWidget {
 }
 
 class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   late String parkingLotName;
-
   late List<FloorRequestDto> floors;
+  int lastFloor = 1;
+  bool loading = false;
 
   @override
   void initState() {
     super.initState();
-    parkingLotName = "New parking lot";
+    parkingLotName = "Parking lot";
     floors = [];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(title: const Text("Add parking lot"), actions: <Widget>[
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: const Text("Add parking lot"),
+        actions: <Widget>[
           IconButton(
-              icon: const Icon(Icons.publish),
-              onPressed: () {
-                _saveParkingLot();
-              }),
-        ]),
-        backgroundColor: Colors.white,
-        body: BlocConsumer<ParkingLotBloc, ParkingLotState>(
-            listener: (context, state) {
+            icon: const Icon(Icons.publish),
+            onPressed: () {
+              _saveParkingLot();
+            },
+          ),
+        ],
+      ),
+      backgroundColor: Colors.white,
+      body: BlocConsumer<ParkingLotBloc, ParkingLotState>(
+        listener: (context, state) {
           if (state is CreateParkingLotLoadingState) {
-            WidgetsBinding.instance.addPostFrameCallback(
-                (_) => loadingIndicator(context, "creating parking lot"));
+            loading = true;
           } else if (state is CreateParkingLotSuccessState) {
-            Navigator.of(context, rootNavigator: true).pop();
+            loading = false;
             widget.callback(state.parkingLotResponseDto);
             Navigator.of(context, rootNavigator: true).pop();
 
             CommonMethods.showToast(
-                context: context,
-                text: "Parking lot created successfully",
-                seconds: 2);
+              context: context,
+              text: "Parking lot created successfully",
+              seconds: 2,
+            );
           } else if (state is CreateParkingLotErrorState) {
-            Navigator.of(context, rootNavigator: true).pop();
+            loading = false;
 
             CommonMethods.showToast(
-                context: context, text: state.error, seconds: 2);
+              context: context,
+              text: state.error,
+              seconds: 2,
+            );
           }
-        }, buildWhen: (prev, curr) {
+        },
+        buildWhen: (prev, curr) {
           return curr is CreateParkingLotSuccessState;
-        }, builder: (context, state) {
+        },
+        builder: (context, state) {
           return itemDetails(context);
-        }));
+        },
+      ),
+    );
   }
 
   Widget itemDetails(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(8.0, 10.0, 0.0, 0.0),
-        child: SingleChildScrollView(
-          child: Column(children: [
+    return (!loading)
+        ? Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
             CustomEditTextBox(
-                text: parkingLotName,
-                label: "Parking name",
-                callback: (e) => {parkingLotName = e}),
+              text: parkingLotName,
+              label: "Parking name",
+              callback: (e) => {parkingLotName = e},
+            ),
             ListView.builder(
               shrinkWrap: true,
               itemCount: floors.length,
@@ -100,19 +114,24 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
             ElevatedButton(
               onPressed: () {
                 _showFloorDialog(
-                    context,
-                    FloorRequestDto(
-                        name: "New floor",
-                        smallSlots: 100,
-                        mediumSlots: 100,
-                        largeSlots: 100,
-                        xlargeSlots: 100),
-                    true);
+                  context,
+                  FloorRequestDto(
+                    name: "Floor ${lastFloor++}",
+                    smallSlots: 10,
+                    mediumSlots: 10,
+                    largeSlots: 10,
+                    xlargeSlots: 10,
+                  ),
+                  true,
+                );
               },
               child: const Text('Add Floor'),
             ),
-          ]),
-        ));
+          ],
+        ),
+      ),
+    )
+        : const Center(child: CircularProgressIndicator());
   }
 
   Widget _buildFloorFormField(FloorRequestDto floor) {
@@ -120,9 +139,10 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         CustomEditTextBox(
-            text: floor.name,
-            label: "Floor name",
-            callback: (e) => {floor.name = e}),
+          text: floor.name,
+          label: "Floor name",
+          callback: (e) => {floor.name = e},
+        ),
         CustomEditTextBoxNumber(
           number: floor.smallSlots,
           label: 'Small Slots',
@@ -150,13 +170,12 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
           callback: (slots) {
             floor.xlargeSlots = slots;
           },
-        )
+        ),
       ],
     );
   }
 
-  void _showFloorDialog(
-      BuildContext context, FloorRequestDto floor, bool addNew) {
+  void _showFloorDialog(BuildContext context, FloorRequestDto floor, bool addNew) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -167,30 +186,30 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
           content: _buildFloorFormField(floor),
           actions: (!addNew)
               ? [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("Close"),
-                  )
-                ]
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Close"),
+            )
+          ]
               : [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("Close"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      setState(() {
-                        floors.add(floor);
-                      });
-                    },
-                    child: const Text("Add"),
-                  )
-                ],
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Close"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  floors.add(floor);
+                });
+              },
+              child: const Text("Add"),
+            )
+          ],
         );
       },
     );
@@ -203,9 +222,8 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
   }
 
   void _saveParkingLot() {
-    final parkingLot =
-        ParkingLotRequestDto(name: parkingLotName, floors: floors);
-    BlocProvider.of<ParkingLotBloc>(context)
-        .add(CreateParkingLotEvent(parkingLotRequestDto: parkingLot));
+    final parkingLot = ParkingLotRequestDto(name: parkingLotName, floors: floors);
+    BlocProvider.of<ParkingLotBloc>(context).add(CreateParkingLotEvent(parkingLotRequestDto: parkingLot));
   }
 }
+

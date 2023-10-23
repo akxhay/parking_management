@@ -20,17 +20,8 @@ dependencies:
   flutter_slidable: ^3.0.0
   dropdown_button2: ^2.0.0
   expandable_text: ^2.3.0
-  audioplayers: ^4.1.0
-  video_player: ^2.6.0
   rxdart: ^0.27.7
   floor: ^1.4.2
-  web_socket_channel: ^2.4.0
-  permission_handler: ^10.4.3
-  cached_network_image: ^3.2.3
-  chewie: ^1.7.0
-  flutter_reorderable_grid_view: ^4.0.0
-  package_info_plus: ^4.1.0
-  path_provider: ^2.1.0
 
 
 dev_dependencies:

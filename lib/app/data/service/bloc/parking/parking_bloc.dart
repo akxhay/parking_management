@@ -39,7 +39,6 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
           parkingLots.clear();
         }
         var response = await _parkingRepository.fetchItems(page, size);
-
         if (response.statusCode == 200) {
           final dynamic map =
               convert.jsonDecode(utf8.decode(response.bodyBytes)) as dynamic;
@@ -101,12 +100,9 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
             log("emitting error state 1");
             emit(const CreateParkingLotErrorState("Item not found"));
           }
-        } else if (response.statusCode == HttpStatus.notFound) {
-          log("emitting error state 2");
-          emit(const CreateParkingLotErrorState("content not found"));
         } else {
-          log("emitting error state 3");
-          emit(const CreateParkingLotErrorState("Could not save items"));
+          log("emitting error state 2");
+          emit(CreateParkingLotErrorState(response.body));
         }
       } catch (e) {
         log("emitting error state 4$e");

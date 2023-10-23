@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../ui/modules/home_page.dart';
+import '../ui/pages/home_page.dart';
 import 'app_routes.dart';
 
 abstract class AppPages {

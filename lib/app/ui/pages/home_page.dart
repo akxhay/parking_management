@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
-import 'package:parking/app/ui/modules/parking_lot.dart';
-import 'package:parking/app/widget/loaders.dart';
+import 'package:parking/app/ui/pages/parking_lot_page.dart';
 
 import '../../data/service/bloc/parking/parking_bloc.dart';
 import '../../util/common_method.dart';
-import 'add_new_lot.dart';
+import '../widget/loaders.dart';
+import 'add_new_parking_lot.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -83,9 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget showParkingLots() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white70,
+    return (context.read<ParkingLotBloc>().parkingLots.isNotEmpty)
+        ? Container(
+            decoration: BoxDecoration(
+              color: Colors.white70,
         borderRadius: BorderRadius.circular(10.0), // Rounded corners
         boxShadow: [
           // Box shadow for subtle elevation effect
@@ -98,11 +100,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       margin: EdgeInsets.fromLTRB(
-        5.0,
-        MediaQuery.of(context).size.height * .01,
-        5.0,
-        0.0,
-      ),
+              MediaQuery.of(context).size.width * .01,
+              MediaQuery.of(context).size.height * .01,
+              MediaQuery.of(context).size.width * .01,
+              0.0,
+            ),
       child: Column(
         children: [
           Expanded(
@@ -123,7 +125,21 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-    );
+          )
+        : const ListTile(
+            title: SizedBox(
+            height: 100,
+            child: Center(
+              child: Text(
+                'Parking lots are not available at the moment',
+                // Message to indicate slidable
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15.0,
+                ),
+              ),
+            ),
+          ));
   }
 
   Widget buildStream() {
@@ -134,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
               context: context, text: "Loading...", seconds: 1);
         } else if (st is FetchParkingLotLoadedState && st.parkingLots.isEmpty) {
           CommonMethods.showToast(
-              context: context, text: "No more photos...", seconds: 1);
+              context: context, text: "No more parking lots...", seconds: 1);
         } else if (st is FetchParkingLotErrorState) {
           CommonMethods.showToast(context: context, text: st.error, seconds: 1);
           context.read<ParkingLotBloc>().isFetching = false;
@@ -172,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         );
                       }
 
-                      if (state is FetchParkingLotLoadingState &&
+                      if (state is FetchParkingLotLoadedState &&
                           context.read<ParkingLotBloc>().parkingLots.isEmpty) {
                         return const Center(
                           child: CircularProgressIndicator(
@@ -181,9 +197,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         );
                       }
 
-                      if (state is FetchParkingLotLoadedState) {
-                        context.read<ParkingLotBloc>().isFetching = false;
-                      }
                       return buildParkingLot(
                           context.read<ParkingLotBloc>().parkingLots[index]);
                     },
@@ -202,28 +215,53 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildParkingLot(ParkingLotResponseDto parkingLot) {
     return Column(
       children: <Widget>[
-        ListTile(
-          title: Text(
-            parkingLot.name,
-            style: const TextStyle(
-              fontSize: 13.0,
-              color: Colors.blue,
-            ),
-            overflow: TextOverflow.visible,
-            maxLines: 1,
+        Slidable(
+          key: UniqueKey(),
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            children: [
+              SlidableAction(
+                onPressed: (context) {
+                  deleteItem(context, parkingLot.id);
+                },
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+                icon: Icons.delete,
+                label: 'Delete',
+              ),
+            ],
           ),
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ParkingLotPage(
-                    parkingLot: parkingLot,
-                  ))),
-          trailing: IconButton(
-            icon: const Icon(
-              Icons.delete,
-              color: Colors.red,
+          child: ListTile(
+            title: Text(
+              parkingLot.name,
+              style: const TextStyle(
+                fontSize: 15.0,
+                color: Colors.blue,
+              ),
+              overflow: TextOverflow.visible,
+              maxLines: 1,
+            ),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ParkingLotPage(
+                      parkingLot: parkingLot,
+                    ))),
+            trailing: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.arrow_left,
+                  color: Colors.red,
+                ),
+                SizedBox(width: 8), // Add some spacing
+                Text(
+                  'Swipe to Delete', // Message to indicate slidable
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12.0,
                   ),
-                  onPressed: () {
-                    deleteItem(context, parkingLot.id);
-                  },
+                ),
+              ],
+            ),
           ),
         ),
         const Divider(

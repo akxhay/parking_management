@@ -4,7 +4,7 @@ import 'package:parking/app/data/dto/response_dto.dart';
 import 'package:parking/app/util/common_method.dart';
 
 import '../../data/service/bloc/parking/parking_bloc.dart';
-import '../../widget/loaders.dart';
+import '../widget/loaders.dart';
 
 class ParkingFloorPage extends StatefulWidget {
   const ParkingFloorPage(
