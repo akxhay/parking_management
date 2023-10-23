@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parking/app/data/constants/generic_constants.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
-import 'package:parking/app/ui/pages/parking_floor_page.dart';
 import 'package:parking/app/ui/widget/pop_up_park_car.dart';
 
 import '../../data/dto/generic_dto.dart';
-import '../../data/service/bloc/parking/parking_bloc.dart';
+import '../../data/service/parking_bloc/parking_bloc.dart';
+import '../../routes/app_routes.dart';
 import '../widget/loaders.dart';
 import '../widget/pop_up_parking_card.dart';
 
 class ParkingLotPage extends StatefulWidget {
-  const ParkingLotPage({super.key, required this.parkingLot});
+  const ParkingLotPage({super.key, required this.context});
 
-
-  final ParkingLotResponseDto parkingLot;
+  final BuildContext context;
 
   @override
   State<ParkingLotPage> createState() => _ParkingLotPageState();
@@ -22,6 +21,18 @@ class ParkingLotPage extends StatefulWidget {
 
 class _ParkingLotPageState extends State<ParkingLotPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  late final ParkingLotResponseDto parkingLot;
+
+  @override
+  void initState() {
+    super.initState();
+
+    parkingLot = ModalRoute.of(widget.context)!.settings.arguments
+        as ParkingLotResponseDto;
+
+    // Now you can use the parkingLot object within your stateful widget.
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +42,7 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
         WidgetsBinding.instance.addPostFrameCallback(
             (_) => loadingIndicator(context, "getting parking lot"));
       } else if (state is GetParkingLotSuccessState) {
-        updateParkingLot(widget.parkingLot, state.availableParkingSlotDto);
+        updateParkingLot(parkingLot, state.availableParkingSlotDto);
         Navigator.of(context, rootNavigator: true).pop();
         parkingCard(context, (state.availableParkingSlotDto));
       } else if (state is GetParkingLotErrorState) {
@@ -49,7 +60,7 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
   Widget floorDetails(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(title: Text(widget.parkingLot.name)),
+        appBar: AppBar(title: Text(parkingLot.name)),
         backgroundColor: Colors.white,
         floatingActionButton: parkingFloorFloats(context),
         body: Padding(
@@ -58,12 +69,10 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
               children: <Widget>[
                 Expanded(
                   child: ListView.builder(
-                      itemCount: widget.parkingLot.floors.length,
+                      itemCount: parkingLot.floors.length,
                       itemBuilder: (context, index) {
                         return makeListTile(
-                            context,
-                            widget.parkingLot.floors[index],
-                            widget.parkingLot.id);
+                            context, parkingLot.floors[index], parkingLot.id);
                       }),
                 ),
               ],
@@ -76,14 +85,14 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
       title: Text(floor.name),
       subtitle: _buildDataTable(floor.parkingSlots),
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ParkingFloorPage(
-                    parkingFloor: floor, parkingId: parkingId))).then((value) {
+        Navigator.of(context).pushNamed(AppRoute.parkingFloor,
+            arguments: <String, Object>{
+              "parkingFloor": floor,
+              "parkingId": parkingId
+            }).then((value) {
           setState(() {
-            widget.parkingLot.floors = FloorResponseDto.fromJsonArray(
-                widget.parkingLot.floors.map((e) => e.toMap()).toList());
+            parkingLot.floors = FloorResponseDto.fromJsonArray(
+                parkingLot.floors.map((e) => e.toMap()).toList());
           });
         });
       },
@@ -187,8 +196,8 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
     return FloatingActionButton(
       onPressed: () {
         parkCar(context, (String size) {
-          BlocProvider.of<ParkingLotBloc>(context).add(
-              GetParkingSlotEvent(parkingId: widget.parkingLot.id, size: size));
+          BlocProvider.of<ParkingLotBloc>(context)
+              .add(GetParkingSlotEvent(parkingId: parkingLot.id, size: size));
         });
       },
       tooltip: 'Park a car',

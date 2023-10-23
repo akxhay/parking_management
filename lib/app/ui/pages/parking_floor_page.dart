@@ -4,16 +4,13 @@ import 'package:parking/app/data/constants/generic_constants.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
 import 'package:parking/app/util/common_method.dart';
 
-import '../../data/service/bloc/parking/parking_bloc.dart';
+import '../../data/service/parking_bloc/parking_bloc.dart';
 import '../widget/loaders.dart';
 
 class ParkingFloorPage extends StatefulWidget {
-  const ParkingFloorPage(
-      {super.key, required this.parkingFloor, required this.parkingId});
+  const ParkingFloorPage({super.key, required this.context});
 
-  final int parkingId;
-
-  final FloorResponseDto parkingFloor;
+  final BuildContext context;
 
   @override
   State<ParkingFloorPage> createState() => _ParkingFloorPageState();
@@ -24,15 +21,24 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
   Map<String, List<ParkingSlotDto>> map = {};
   int? updatedId;
 
+  late final int parkingId;
+
+  late final FloorResponseDto parkingFloor;
+
   @override
   void initState() {
     super.initState();
+    var argsMap = ModalRoute.of(widget.context)!.settings.arguments
+        as Map<String, Object>;
+    parkingId = argsMap["parkingId"] as int;
+    parkingFloor = argsMap["parkingFloor"] as FloorResponseDto;
+
     map["s"] = [];
     map["m"] = [];
     map["l"] = [];
     map["xl"] = [];
 
-    for (var slot in widget.parkingFloor.parkingSlots) {
+    for (var slot in parkingFloor.parkingSlots) {
       final String slotType = slot.slotType;
       if (map.containsKey(slotType)) {
         map[slotType]?.add(slot);
@@ -50,7 +56,7 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
         WidgetsBinding.instance.addPostFrameCallback(
             (_) => loadingIndicator(context, "releasing parking lot"));
       } else if (state is ReleaseParkingLotSuccessState) {
-        updateParkingFloor(widget.parkingFloor, updatedId);
+        updateParkingFloor(parkingFloor, updatedId);
         Navigator.of(context, rootNavigator: true).pop();
       } else if (state is ReleaseParkingLotErrorState) {
         Navigator.of(context, rootNavigator: true).pop();
@@ -69,7 +75,7 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(title: Text(widget.parkingFloor.name)),
+      appBar: AppBar(title: Text(parkingFloor.name)),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(8.0, 10.0, 0.0, 0.0),
@@ -162,7 +168,7 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
                     });
                     BlocProvider.of<ParkingLotBloc>(context).add(
                         ReleaseParkingSlotEvent(
-                            slotId: slotId, parkingId: widget.parkingId));
+                            slotId: slotId, parkingId: parkingId));
                   },
                   child: const Text(
                     'OK',

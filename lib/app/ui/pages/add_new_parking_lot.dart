@@ -3,15 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parking/app/data/dto/request_dto.dart';
 
 import '../../data/dto/response_dto.dart';
-import '../../data/service/bloc/parking/parking_bloc.dart';
+import '../../data/service/parking_bloc/parking_bloc.dart';
 import '../../util/common_method.dart';
 import '../widget/edit_text_box.dart';
 import '../widget/edit_text_box_number.dart';
+import '../widget/loaders.dart';
 
 class AddNewParkingLotPage extends StatefulWidget {
-  const AddNewParkingLotPage({Key? key, required this.callback}) : super(key: key);
+  const AddNewParkingLotPage({Key? key, required this.context})
+      : super(key: key);
 
-  final Function(ParkingLotResponseDto) callback;
+  final BuildContext context;
 
   @override
   State<AddNewParkingLotPage> createState() => _AddNewParkingLotPageState();
@@ -24,9 +26,14 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
   int lastFloor = 1;
   bool loading = false;
 
+  late Function(ParkingLotResponseDto) callback;
+
   @override
   void initState() {
     super.initState();
+    callback = ModalRoute.of(widget.context)!.settings.arguments as Function(
+        ParkingLotResponseDto);
+
     parkingLotName = "Parking lot";
     floors = [];
   }
@@ -53,7 +60,7 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
             loading = true;
           } else if (state is CreateParkingLotSuccessState) {
             loading = false;
-            widget.callback(state.parkingLotResponseDto);
+            callback(state.parkingLotResponseDto);
             Navigator.of(context, rootNavigator: true).pop();
 
             CommonMethods.showToast(
@@ -131,7 +138,7 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
         ),
       ),
     )
-        : const Center(child: CircularProgressIndicator());
+        : const Center(child: CircularLoading());
   }
 
   Widget _buildFloorFormField(FloorRequestDto floor) {

@@ -3,12 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
-import 'package:parking/app/ui/pages/parking_lot_page.dart';
 
-import '../../data/service/bloc/parking/parking_bloc.dart';
+import '../../data/service/parking_bloc/parking_bloc.dart';
+import '../../routes/app_routes.dart';
 import '../../util/common_method.dart';
 import '../widget/loaders.dart';
-import 'add_new_parking_lot.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -191,9 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       if (state is FetchParkingLotLoadedState &&
                           context.read<ParkingLotBloc>().parkingLots.isEmpty) {
                         return const Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.red,
-                          ),
+                          child: CircularLoading(),
                         );
                       }
 
@@ -241,10 +238,10 @@ class _MyHomePageState extends State<MyHomePage> {
               overflow: TextOverflow.visible,
               maxLines: 1,
             ),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ParkingLotPage(
-                      parkingLot: parkingLot,
-                    ))),
+            onTap: () => {
+              Navigator.of(context)
+                  .pushNamed(AppRoute.parkingLot, arguments: parkingLot)
+            },
             trailing: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -329,19 +326,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget addFloat(MaterialColor color) {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => AddNewParkingLotPage(
-                      callback: (ParkingLotResponseDto e) {
-                        setState(() {
-                          context
-                              .read<ParkingLotBloc>()
-                              .parkingLots
-                              .insert(0, e);
-                        });
-                      },
-                    )));
+        Navigator.of(context).pushNamed(
+          AppRoute.addParkingLot,
+          arguments: (ParkingLotResponseDto e) {
+            setState(() {
+              context.read<ParkingLotBloc>().parkingLots.insert(0, e);
+            });
+          },
+        );
       },
       tooltip: 'Create new',
       heroTag: null,

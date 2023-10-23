@@ -9,10 +9,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parking/app/data/dto/request_dto.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
 
-import '../../../dao/parking_repository.dart';
+import '../../dao/parking_repository.dart';
 
-part 'parking_event.dart';
-part 'parking_state.dart';
+part 'parking_event.dart';part 'parking_state.dart';
 
 class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
   final ParkingRepository _parkingRepository;

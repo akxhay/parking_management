@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../core/theme/app_theme.dart';
 import 'data/dao/parking_repository.dart';
-import 'data/service/bloc/parking/parking_bloc.dart';
+import 'data/service/parking_bloc/parking_bloc.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
 
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'CB bot',
+        title: 'Parking',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         initialRoute: AppRoute.home,
