@@ -7,10 +7,36 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:parking/app/app.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
 import 'package:parking/app/ui/widget/pop_up_parking_card.dart';
 
 void main() {
+  testWidgets('App Widget should render correctly',
+      (WidgetTester tester) async {
+    // Build the widget tree
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: App(),
+      ),
+    );
+
+    expect(find.byType(MyApp), findsOneWidget);
+  });
+
+  testWidgets('App Widget should render correctly',
+          (WidgetTester tester) async {
+        // Build the widget tree
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: parkingFloorFloats(),
+          ),
+        );
+
+        expect(find.byType(MyApp), findsOneWidget);
+      });
+
+
   testWidgets('ParkingArrivalReceiptDialog should render correctly',
       (WidgetTester tester) async {
     // Build our widget with a MaterialApp and the ParkingArrivalReceiptDialog
@@ -33,9 +59,6 @@ void main() {
     expect(find.text('Parking arrival receipt'), findsOneWidget);
 
     expect(find.text('Floor name:'), findsOneWidget);
-    // expect(find.text('Slot type: s'), findsOneWidget);
-    // expect(find.text('Slot number: 5'), findsOneWidget);
-    // expect(find.text('Number plate: ABC123'), findsOneWidget);
   });
 
   testWidgets('ParkingDepartureReceiptDialog should render correctly',
@@ -59,8 +82,5 @@ void main() {
     expect(find.text('Parking departure receipt'), findsOneWidget);
 
     expect(find.text('ABCD123'), findsOneWidget);
-    // expect(find.text('Slot type: s'), findsOneWidget);
-    // expect(find.text('Slot number: 5'), findsOneWidget);
-    // expect(find.text('Number plate: ABC123'), findsOneWidget);
   });
 }
