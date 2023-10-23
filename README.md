@@ -49,6 +49,7 @@ These instructions will help you get a copy of the project up and running on you
    ```
 
 ## Screenshots
+```HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -233,7 +234,7 @@ These instructions will help you get a copy of the project up and running on you
 
 </body>
 </html>
-
+```
 
 Thank you. 😄
 
