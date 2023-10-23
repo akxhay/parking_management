@@ -163,8 +163,8 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
       ReservedParkingSlotDto availableParkingSlotDto) {
     showDialog<String>(
       context: context,
-      builder: (BuildContext context) => ParkingReceiptDialog(
-        availableParkingSlotDto: availableParkingSlotDto,
+      builder: (BuildContext context) => ParkingArrivalReceiptDialog(
+        reservedParkingSlotDto: availableParkingSlotDto,
       ),
     );
   }

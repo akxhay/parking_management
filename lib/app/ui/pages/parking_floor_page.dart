@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parking/app/data/constants/generic_constants.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
-import 'package:parking/app/ui/widget/pop_up_parked_car_info.dart';
 import 'package:parking/app/util/common_method.dart';
 
 import '../../data/service/parking_bloc/parking_bloc.dart';
 import '../widget/loaders.dart';
+import '../widget/pop_up_parking_card.dart';
 
 class ParkingFloorPage extends StatefulWidget {
   const ParkingFloorPage({super.key, required this.context});
@@ -139,7 +139,7 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
   void openParkedCarInfo(BuildContext context, ParkingSlotDto parkingSlotDto) {
     showDialog<String>(
       context: context,
-      builder: (BuildContext context) => ParkedCarInfoDialog(
+      builder: (BuildContext context) => ParkingDepartureReceiptDialog(
           parkingSlotDto: parkingSlotDto,
           callback: () {
             Navigator.pop(context, 'OK');

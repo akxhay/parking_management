@@ -156,53 +156,45 @@ class _MyHomePageState extends State<MyHomePage> {
         return;
       },
       builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: () async {
-            context
-                .read<ParkingLotBloc>()
-                .add(const FetchParkingLotsEvent(clear: true));
-          },
-          child: CustomScrollView(
-            controller: _scrollController
-              ..addListener(() {
-                if (_scrollController.offset ==
-                        _scrollController.position.maxScrollExtent &&
-                    !context.read<ParkingLotBloc>().isFetching) {
-                  context.read<ParkingLotBloc>()
-                    ..isFetching = true
-                    ..add(const FetchParkingLotsEvent(clear: false));
-                }
-              }),
-            slivers: <Widget>[
-              SliverPadding(
-                padding: const EdgeInsets.all(8.0),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      if (state is FetchParkingLotErrorState &&
-                          context.read<ParkingLotBloc>().parkingLots.isEmpty) {
-                        return Center(
-                          child: Text('Error: ${state.error}'),
-                        );
-                      }
+        return CustomScrollView(
+          controller: _scrollController
+            ..addListener(() {
+              if (_scrollController.offset ==
+                      _scrollController.position.maxScrollExtent &&
+                  !context.read<ParkingLotBloc>().isFetching) {
+                context.read<ParkingLotBloc>()
+                  ..isFetching = true
+                  ..add(const FetchParkingLotsEvent(clear: false));
+              }
+            }),
+          slivers: <Widget>[
+            SliverPadding(
+              padding: const EdgeInsets.all(8.0),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    if (state is FetchParkingLotErrorState &&
+                        context.read<ParkingLotBloc>().parkingLots.isEmpty) {
+                      return Center(
+                        child: Text('Error: ${state.error}'),
+                      );
+                    }
 
-                      if (state is FetchParkingLotLoadedState &&
-                          context.read<ParkingLotBloc>().parkingLots.isEmpty) {
-                        return const Center(
-                          child: CircularLoading(),
-                        );
-                      }
+                    if (state is FetchParkingLotLoadedState &&
+                        context.read<ParkingLotBloc>().parkingLots.isEmpty) {
+                      return const Center(
+                        child: CircularLoading(),
+                      );
+                    }
 
-                      return buildParkingLot(
-                          context.read<ParkingLotBloc>().parkingLots[index]);
-                    },
-                    childCount:
-                        context.read<ParkingLotBloc>().parkingLots.length,
-                  ),
+                    return buildParkingLot(
+                        context.read<ParkingLotBloc>().parkingLots[index]);
+                  },
+                  childCount: context.read<ParkingLotBloc>().parkingLots.length,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
