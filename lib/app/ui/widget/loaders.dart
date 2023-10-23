@@ -35,38 +35,38 @@ class CircularLoading extends StatelessWidget {
     );
   }
 }
-
 void loadingIndicator(BuildContext context, String title) {
   showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: Text(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: Platform.isIOS
+            ? CupertinoAlertDialog(
+                title: Text(
+                  title,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                content: const CupertinoActivityIndicator(radius: 13.0),
+              )
+            : AlertDialog(
+                title: Center(
+                  child: Text(
                     title,
                     style: const TextStyle(fontSize: 20),
                   ),
-                  content: const CupertinoActivityIndicator(radius: 13.0),
-                )
-              : AlertDialog(
-                  title: Center(
-                    child: Text(
-                      title,
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                  ),
-                  content: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                    ],
-                  ),
                 ),
-        );
-      });
+                content: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+      );
+    },
+  );
 }
 
 void messageDialog(BuildContext context, String title, String message) {

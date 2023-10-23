@@ -39,14 +39,13 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
     return BlocConsumer<ParkingLotBloc, ParkingLotState>(
         listener: (context, state) {
       if (state is GetParkingLotLoadingState) {
-        WidgetsBinding.instance.addPostFrameCallback(
-            (_) => loadingIndicator(context, "getting parking lot"));
+        loadingIndicator(context, "getting parking lot");
       } else if (state is GetParkingLotSuccessState) {
         updateParkingLot(parkingLot, state.availableParkingSlotDto);
-        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pop(context); // Close the loading indicator dialog.
         parkingCard(context, (state.availableParkingSlotDto));
       } else if (state is GetParkingLotErrorState) {
-        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pop(context); // Close the loading indicator dialog.
         WidgetsBinding.instance.addPostFrameCallback(
             (_) => messageDialog(context, "Failed", state.error));
       }
@@ -151,7 +150,7 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
     );
   }
 
-  void parkCar(BuildContext context, Function(String) callBack) {
+  void parkCar(BuildContext context, Function(String, String) callBack) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => ParkCarSelectionDialog(
@@ -160,8 +159,8 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
     );
   }
 
-  void parkingCard(
-      BuildContext context, AvailableParkingSlotDto availableParkingSlotDto) {
+  void parkingCard(BuildContext context,
+      ReservedParkingSlotDto availableParkingSlotDto) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => ParkingReceiptDialog(
@@ -171,7 +170,7 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
   }
 
   void updateParkingLot(ParkingLotResponseDto parkingLot,
-      AvailableParkingSlotDto availableParkingSlotDto) {
+      ReservedParkingSlotDto availableParkingSlotDto) {
     setState(() {
       var x = parkingLot.floors
           .where((element) => element.id == availableParkingSlotDto.floorId)
@@ -180,6 +179,8 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
           .where((element) => element.id == availableParkingSlotDto.slotId)
           .first;
       y.occupied = true;
+      y.numberPlate = availableParkingSlotDto.numberPlate;
+      y.arrivedAt = availableParkingSlotDto.arrivedAt;
     });
   }
 
@@ -195,9 +196,9 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
   Widget parkFloat(MaterialColor color) {
     return FloatingActionButton(
       onPressed: () {
-        parkCar(context, (String size) {
-          BlocProvider.of<ParkingLotBloc>(context)
-              .add(GetParkingSlotEvent(parkingId: parkingLot.id, size: size));
+        parkCar(context, (String size, String numberPlate) {
+          BlocProvider.of<ParkingLotBloc>(context).add(GetParkingSlotEvent(
+              parkingId: parkingLot.id, size: size, numberPlate: numberPlate));
         });
       },
       tooltip: 'Park a car',

@@ -34,11 +34,13 @@ class CreateParkingLotEvent extends ParkingLotEvent {
 class GetParkingSlotEvent extends ParkingLotEvent {
   final int parkingId;
   final String size;
+  final String numberPlate;
 
-  const GetParkingSlotEvent({required this.parkingId, required this.size});
+  const GetParkingSlotEvent(
+      {required this.parkingId, required this.size, required this.numberPlate});
 
   @override
-  List<Object> get props => [parkingId, size];
+  List<Object> get props => [parkingId, size, numberPlate];
 }
 
 class ReleaseParkingSlotEvent extends ParkingLotEvent {

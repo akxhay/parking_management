@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parking/app/data/constants/generic_constants.dart';
 import 'package:parking/app/data/dto/response_dto.dart';
+import 'package:parking/app/ui/widget/pop_up_parked_car_info.dart';
 import 'package:parking/app/util/common_method.dart';
 
 import '../../data/service/parking_bloc/parking_bloc.dart';
@@ -53,13 +54,12 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
     return BlocConsumer<ParkingLotBloc, ParkingLotState>(
         listener: (context, state) {
       if (state is ReleaseParkingLotLoadingState) {
-        WidgetsBinding.instance.addPostFrameCallback(
-            (_) => loadingIndicator(context, "releasing parking lot"));
+        loadingIndicator(context, "releasing parking lot");
       } else if (state is ReleaseParkingLotSuccessState) {
         updateParkingFloor(parkingFloor, updatedId);
-        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pop(context); // Close the loading indicator dialog.
       } else if (state is ReleaseParkingLotErrorState) {
-        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pop(context); // Close the loading indicator dialog.
         WidgetsBinding.instance.addPostFrameCallback(
             (_) => messageDialog(context, "Failed", state.error));
       }
@@ -83,7 +83,7 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
           children: <Widget>[
             for (var slotType in map.keys)
               ExpansionTile(
-                initiallyExpanded: false, // Set to true if you want them initially expanded
+                initiallyExpanded: slotType == 's',
                 title: Text(
                   'Car size : ${GenericConstants.carTypes[slotType]}',
                   style: const TextStyle(
@@ -115,7 +115,7 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
                                 text: "This slot is already free",
                               );
                             } else {
-                              releaseSlot(context, map[slotType]![index].id);
+                              openParkedCarInfo(context, map[slotType]![index]);
                             }
                           },
                           child: Text(
@@ -136,6 +136,22 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
     );
   }
 
+  void openParkedCarInfo(BuildContext context, ParkingSlotDto parkingSlotDto) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => ParkedCarInfoDialog(
+          parkingSlotDto: parkingSlotDto,
+          callback: () {
+            Navigator.pop(context, 'OK');
+            setState(() {
+              updatedId = parkingSlotDto.id;
+            });
+            BlocProvider.of<ParkingLotBloc>(context).add(
+                ReleaseParkingSlotEvent(
+                    slotId: parkingSlotDto.id, parkingId: parkingId));
+          }),
+    );
+  }
 
   void releaseSlot(BuildContext context, int slotId) {
     showDialog<String>(

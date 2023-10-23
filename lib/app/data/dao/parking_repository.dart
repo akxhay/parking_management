@@ -40,12 +40,16 @@ class ParkingRepository {
         body: jsonString);
   }
 
-  Future<http.Response> getSlot(parkingId, size) async {
+  Future<http.Response> getSlot(parkingId, size, numberPlate) async {
     final Uri url =
         Uri.http(GenericConstants.host, "/parking/getslot/$parkingId/$size");
 
     log(url.toString());
-    return await http.get(url);
+    return await http.get(url, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'numberPlate': numberPlate,
+      'arrivedAt': DateTime.now().millisecondsSinceEpoch.toString()
+    });
   }
 
   Future<http.Response> releaseSlot(parkingId, slotId) async {

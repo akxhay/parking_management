@@ -11,7 +11,9 @@ import 'package:parking/app/data/dto/response_dto.dart';
 
 import '../../dao/parking_repository.dart';
 
-part 'parking_event.dart';part 'parking_state.dart';
+part 'parking_event.dart';
+
+part 'parking_state.dart';
 
 class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
   final ParkingRepository _parkingRepository;
@@ -52,15 +54,12 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
             log("emitting error state 1");
             emit(const FetchParkingLotErrorState("No item available"));
           }
-        } else if (response.statusCode == HttpStatus.noContent) {
-          log("emitting error state 2");
-          emit(const FetchParkingLotErrorState("content not found"));
         } else {
-          log("emitting error state 3");
+          log("emitting error state 2");
           emit(const FetchParkingLotErrorState("Could not fetch items"));
         }
       } catch (e) {
-        log("emitting error state 4$e");
+        log("emitting error state 3 $e");
         emit(FetchParkingLotErrorState(e.toString()));
       }
     } else if (event is DeleteParkingLotEvent) {
@@ -104,35 +103,32 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
           emit(CreateParkingLotErrorState(response.body));
         }
       } catch (e) {
-        log("emitting error state 4$e");
+        log("emitting error state 4 $e");
         emit(CreateParkingLotErrorState(e.toString()));
       }
     } else if (event is GetParkingSlotEvent) {
       log("emitting loading state");
       emit(GetParkingLotLoadingState());
       try {
-        var response =
-            await _parkingRepository.getSlot(event.parkingId, event.size);
+        var response = await _parkingRepository.getSlot(
+            event.parkingId, event.size, event.numberPlate);
         if (response.statusCode == HttpStatus.ok) {
           final Map<String, dynamic> map =
               convert.jsonDecode(response.body) as Map<String, dynamic>;
           if (map.isNotEmpty) {
             log("emitting loaded state");
             emit(GetParkingLotSuccessState(
-                AvailableParkingSlotDto.fromJson(map)));
+                ReservedParkingSlotDto.fromJson(map)));
           } else {
             log("emitting error state 1");
             emit(const GetParkingLotErrorState("Item not found"));
           }
-        } else if (response.statusCode == HttpStatus.notFound) {
-          log("emitting error state 2");
-          emit(const GetParkingLotErrorState("Parking slot not available"));
         } else {
-          log("emitting error state 3");
-          emit(const GetParkingLotErrorState("Could not save items"));
+          log("emitting error state 2");
+          emit(GetParkingLotErrorState(response.body));
         }
       } catch (e) {
-        log("emitting error state 4$e");
+        log("emitting error state 3 $e");
         emit(GetParkingLotErrorState(e.toString()));
       }
     } else if (event is ReleaseParkingSlotEvent) {

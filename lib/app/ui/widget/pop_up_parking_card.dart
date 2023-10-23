@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../data/constants/generic_constants.dart';
 import '../../data/dto/response_dto.dart';
-
 class ParkingReceiptDialog extends StatelessWidget {
-  final AvailableParkingSlotDto availableParkingSlotDto;
+  final ReservedParkingSlotDto availableParkingSlotDto;
 
   const ParkingReceiptDialog(
       {super.key, required this.availableParkingSlotDto});
@@ -20,6 +20,9 @@ class ParkingReceiptDialog extends StatelessWidget {
   }
 
   contentBox(context) {
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+        availableParkingSlotDto.arrivedAt ?? 0);
+
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -31,7 +34,7 @@ class ParkingReceiptDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           const Text(
-            'Parking Receipt',
+            'Parking arrival receipt',
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
@@ -50,6 +53,18 @@ class ParkingReceiptDialog extends StatelessWidget {
             label: 'Slot number',
             value: availableParkingSlotDto.slotNumber.toString(),
           ),
+          ParkingReceiptInfo(
+            label: 'Number plate',
+            value: availableParkingSlotDto.numberPlate ?? "",
+          ),
+          ParkingReceiptInfo(
+              label: 'Arrived date',
+              value: DateFormat(GenericConstants.parkingDateFormat)
+                  .format(dateTime)),
+          ParkingReceiptInfo(
+              label: 'Arrived time',
+              value: DateFormat(GenericConstants.parkingTimeFormat)
+                  .format(dateTime)),
           const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {

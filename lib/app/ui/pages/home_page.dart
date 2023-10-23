@@ -50,8 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: BlocConsumer<ParkingLotBloc, ParkingLotState>(
             listener: (context, state) {
           if (state is DeleteParkingLotLoadingState) {
-            WidgetsBinding.instance.addPostFrameCallback(
-                (_) => loadingIndicator(context, "deleting parking lot"));
+            loadingIndicator(context, "deleting parking lot");
           } else if (state is DeleteParkingLotSuccessState) {
             Navigator.of(context, rootNavigator: true).pop();
 
@@ -72,8 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
             setState(() {
               deleteId = null;
             });
-            CommonMethods.showToast(
-                context: context, text: state.error, seconds: 2);
+            WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => messageDialog(context, "Failed", state.error));
           }
         }, buildWhen: (prev, curr) {
           return curr is FetchParkingLotLoadedState;

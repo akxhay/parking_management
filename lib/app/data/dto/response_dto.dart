@@ -128,24 +128,30 @@ class ParkingSlotDto {
     required this.id,
     required this.slotType,
       required this.slotNumber,
-      required this.occupied});
+      required this.occupied,
+      required this.numberPlate,
+      required this.arrivedAt});
 
   int id;
   String slotType;
   int slotNumber;
   bool occupied;
+  String? numberPlate;
+  int? arrivedAt;
 
   factory ParkingSlotDto.fromJson(Map<String, dynamic> json) {
     return ParkingSlotDto(
         id: json["id"],
         slotType: json["slotType"],
         slotNumber: json["slotNumber"],
-        occupied: json["occupied"]);
+        occupied: json["occupied"],
+        numberPlate: json["numberPlate"],
+        arrivedAt: json["arrivedAt"]);
   }
 
   @override
   String toString() {
-    return 'ParkingSlotDto{id: $id,slotType: $slotType, slotType: $slotType, occupied: $occupied}';
+    return 'ParkingSlotDto{id: $id,slotType: $slotType, slotType: $slotType, occupied: $occupied, numberPlate: $numberPlate, arrivedAt: $arrivedAt}';
   }
 
   Map<String, dynamic> toMap() {
@@ -154,6 +160,8 @@ class ParkingSlotDto {
     map["slotType"] = slotType;
     map["slotNumber"] = slotNumber;
     map["occupied"] = occupied;
+    map["numberPlate"] = numberPlate;
+    map["arrivedAt"] = arrivedAt;
     return map;
   }
 
@@ -166,32 +174,38 @@ class ParkingSlotDto {
   }
 }
 
-class AvailableParkingSlotDto {
-  AvailableParkingSlotDto(
+class ReservedParkingSlotDto {
+  ReservedParkingSlotDto(
       {required this.slotId,
       required this.slotType,
       required this.slotNumber,
       required this.floorId,
-      required this.floorName});
+      required this.floorName,
+      required this.numberPlate,
+      required this.arrivedAt});
 
   int slotId;
   String slotType;
   int slotNumber;
   int floorId;
   String floorName;
+  String? numberPlate;
+  int? arrivedAt;
 
-  factory AvailableParkingSlotDto.fromJson(Map<String, dynamic> json) {
-    return AvailableParkingSlotDto(
+  factory ReservedParkingSlotDto.fromJson(Map<String, dynamic> json) {
+    return ReservedParkingSlotDto(
         slotId: json["slotId"],
         slotType: json["slotType"],
         slotNumber: json["slotNumber"],
         floorId: json["floorId"],
-        floorName: json["floorName"]);
+        floorName: json["floorName"],
+        numberPlate: json["numberPlate"],
+        arrivedAt: json["arrivedAt"]);
   }
 
   @override
   String toString() {
-    return 'AvailableParkingSlotDto{slotId: $slotId, slotType: $slotType, slotNumber: $slotNumber, floorId: $floorId, floorName: $floorName}';
+    return 'AvailableParkingSlotDto{slotId: $slotId, slotType: $slotType, slotNumber: $slotNumber, floorId: $floorId, floorName: $floorName, numberPlate: $numberPlate, arrivedAt: $arrivedAt}';
   }
 
   Map<String, dynamic> toMap() {
@@ -201,6 +215,8 @@ class AvailableParkingSlotDto {
     map["slotNumber"] = slotNumber;
     map["floorId"] = floorId;
     map["floorName"] = floorName;
+    map["numberPlate"] = numberPlate;
+    map["arrivedAt"] = arrivedAt;
     return map;
   }
 }

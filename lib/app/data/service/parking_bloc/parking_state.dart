@@ -67,7 +67,7 @@ class GetParkingLotLoadingState extends ParkingLotState {
 }
 
 class GetParkingLotSuccessState extends ParkingLotState {
-  final AvailableParkingSlotDto availableParkingSlotDto;
+  final ReservedParkingSlotDto availableParkingSlotDto;
 
   const GetParkingLotSuccessState(this.availableParkingSlotDto);
 
