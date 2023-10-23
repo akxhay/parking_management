@@ -154,51 +154,6 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
     );
   }
 
-  void releaseSlot(BuildContext context, int slotId) {
-    showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-              title: const Text(
-                'release Item',
-                style: TextStyle(),
-              ),
-              content: const Text(
-                'Press OK to release Item',
-                style: TextStyle(),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'Cancel'),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, 'OK');
-                    setState(() {
-                      updatedId = slotId;
-                    });
-                    BlocProvider.of<ParkingLotBloc>(context).add(
-                        ReleaseParkingSlotEvent(
-                            slotId: slotId, parkingId: parkingId));
-                  },
-                  child: const Text(
-                    'OK',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ));
-  }
-
   void updateParkingFloor(FloorResponseDto parkingFloor, int? updatedId) {
     setState(() {
       parkingFloor.parkingSlots

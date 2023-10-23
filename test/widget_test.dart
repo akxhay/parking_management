@@ -7,23 +7,60 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:parking/app/app.dart';
+import 'package:parking/app/data/dto/response_dto.dart';
+import 'package:parking/app/ui/widget/pop_up_parking_card.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('ParkingArrivalReceiptDialog should render correctly',
+      (WidgetTester tester) async {
+    // Build our widget with a MaterialApp and the ParkingArrivalReceiptDialog
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ParkingArrivalReceiptDialog(
+          reservedParkingSlotDto: ReservedParkingSlotDto(
+            floorName: 'Floor 1',
+            slotType: 's',
+            slotNumber: 15,
+            numberPlate: 'ABC123',
+            arrivedAt: DateTime.now().millisecondsSinceEpoch,
+            slotId: 1,
+            floorId: 1,
+          ),
+        ),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Parking arrival receipt'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.text('Floor name:'), findsOneWidget);
+    // expect(find.text('Slot type: s'), findsOneWidget);
+    // expect(find.text('Slot number: 5'), findsOneWidget);
+    // expect(find.text('Number plate: ABC123'), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('ParkingDepartureReceiptDialog should render correctly',
+      (WidgetTester tester) async {
+    // Build our widget with a MaterialApp and the ParkingArrivalReceiptDialog
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ParkingDepartureReceiptDialog(
+          parkingSlotDto: ParkingSlotDto(
+              id: 1,
+              slotType: "s",
+              slotNumber: 1,
+              occupied: true,
+              numberPlate: "ABCD123",
+              arrivedAt: 12345678),
+          callback: () {},
+        ),
+      ),
+    );
+
+    expect(find.text('Parking departure receipt'), findsOneWidget);
+
+    expect(find.text('ABCD123'), findsOneWidget);
+    // expect(find.text('Slot type: s'), findsOneWidget);
+    // expect(find.text('Slot number: 5'), findsOneWidget);
+    // expect(find.text('Number plate: ABC123'), findsOneWidget);
   });
 }
