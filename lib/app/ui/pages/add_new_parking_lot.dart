@@ -183,7 +183,8 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
     );
   }
 
-  void _showFloorDialog(BuildContext context, FloorRequestDto floor, bool addNew) {
+  void _showFloorDialog(
+      BuildContext context, FloorRequestDto floor, bool addNew) {
     var tempCopy = FloorRequestDto.fromJson(floor.toMap());
     showDialog(
       context: context,
@@ -407,7 +408,7 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
                 child: const Text("Close"),
               ),
               ElevatedButton(
-              onPressed: () {
+                onPressed: () {
                   if (_floorFormKey.currentState!.validate()) {
                     // The form is valid, you can proceed with submitting.
                     Navigator.of(context).pop();
@@ -440,8 +441,9 @@ class _AddNewParkingLotPageState extends State<AddNewParkingLotPage> {
   }
 
   void _saveParkingLot() {
-    final parkingLot = ParkingLotRequestDto(name: parkingLotName, floors: floors);
-    BlocProvider.of<ParkingLotBloc>(context).add(CreateParkingLotEvent(parkingLotRequestDto: parkingLot));
+    final parkingLot =
+        ParkingLotRequestDto(name: parkingLotName, floors: floors);
+    BlocProvider.of<ParkingLotBloc>(context)
+        .add(CreateParkingLotEvent(parkingLotRequestDto: parkingLot));
   }
 }
-

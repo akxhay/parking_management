@@ -13,7 +13,8 @@ and managing parking lots, allocating parking slots, and keeping track of parked
 
 ## Getting Started
 
-These instructions will help you get a copy of the project up and running on your local machine for development and testing purposes.
+These instructions will help you get a copy of the project up and running on your local machine for development and
+testing purposes.
 
 ### Prerequisites
 
@@ -49,6 +50,7 @@ These instructions will help you get a copy of the project up and running on you
    ```
 
 ## Screenshots
+
 [View Screenshot Grid](https://htmlpreview.github.io/?https://github.com/akxhay/parking_management/blob/master/screenshots_grid.html)
 
 Thank you. 😄

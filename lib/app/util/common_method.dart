@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CommonMethods {
-
   static void showToast(
       {required BuildContext context, required String text, int seconds = 2}) {
     final ScaffoldMessengerState scaffold = ScaffoldMessenger.of(context);

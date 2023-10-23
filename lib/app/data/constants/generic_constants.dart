@@ -1,6 +1,3 @@
-
-
-
 class GenericConstants {
   static int parkingPricePerHour = 100;
 

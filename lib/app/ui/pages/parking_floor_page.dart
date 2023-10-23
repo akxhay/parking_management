@@ -102,7 +102,8 @@ class _ParkingFloorPageState extends State<ParkingFloorPage> {
                     ),
                     itemCount: map[slotType]!.length,
                     itemBuilder: (context, index) {
-                      String slotNumber = map[slotType]![index].slotNumber.toString();
+                      String slotNumber =
+                          map[slotType]![index].slotNumber.toString();
                       bool occupied = map[slotType]![index].occupied;
 
                       return Card(

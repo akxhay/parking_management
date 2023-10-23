@@ -124,9 +124,9 @@ class FloorResponseDto {
 }
 
 class ParkingSlotDto {
-  ParkingSlotDto({
-    required this.id,
-    required this.slotType,
+  ParkingSlotDto(
+      {required this.id,
+      required this.slotType,
       required this.slotNumber,
       required this.occupied,
       required this.numberPlate,

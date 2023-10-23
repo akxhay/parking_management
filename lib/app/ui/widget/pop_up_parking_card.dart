@@ -116,7 +116,6 @@ class ParkingDepartureReceiptDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-
           const Text(
             'Parking departure receipt',
             style: TextStyle(

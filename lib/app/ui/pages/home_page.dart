@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               deleteId = null;
             });
             WidgetsBinding.instance.addPostFrameCallback(
-                    (_) => messageDialog(context, "Failed", state.error));
+                (_) => messageDialog(context, "Failed", state.error));
           }
         }, buildWhen: (prev, curr) {
           return curr is FetchParkingLotLoadedState;
@@ -86,50 +86,50 @@ class _MyHomePageState extends State<MyHomePage> {
         ? Container(
             decoration: BoxDecoration(
               color: Colors.white70,
-        borderRadius: BorderRadius.circular(10.0), // Rounded corners
-        boxShadow: [
-          // Box shadow for subtle elevation effect
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      margin: EdgeInsets.fromLTRB(
+              borderRadius: BorderRadius.circular(10.0), // Rounded corners
+              boxShadow: [
+                // Box shadow for subtle elevation effect
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            margin: EdgeInsets.fromLTRB(
               MediaQuery.of(context).size.width * .01,
               MediaQuery.of(context).size.height * .01,
               MediaQuery.of(context).size.width * .01,
               0.0,
             ),
-      child: Column(
-        children: [
-          Expanded(
-            // Use expanded instead of a specific maxHeight for flexibility.
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 5.0),
-              // Consistent margin
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                // Padding for inner content
-                padding: const EdgeInsets.all(8.0),
-                child: buildStream(),
-              ),
+            child: Column(
+              children: [
+                Expanded(
+                  // Use expanded instead of a specific maxHeight for flexibility.
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 5.0),
+                    // Consistent margin
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Padding(
+                      // Padding for inner content
+                      padding: const EdgeInsets.all(8.0),
+                      child: buildStream(),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
           )
         : const ListTile(
             title: SizedBox(
             height: 100,
             child: Center(
               child: Text(
-                'Parking lots are not available at the moment',
+                'All Parking lots will be listed here',
                 // Message to indicate slidable
                 style: TextStyle(
                   color: Colors.black,
@@ -332,7 +332,6 @@ class _MyHomePageState extends State<MyHomePage> {
       child: const Icon(Icons.add),
     );
   }
-
 
   @override
   void dispose() {

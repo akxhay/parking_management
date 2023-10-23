@@ -12,7 +12,6 @@ import 'package:parking/app/data/dto/response_dto.dart';
 import '../../dao/parking_repository.dart';
 
 part 'parking_event.dart';
-
 part 'parking_state.dart';
 
 class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {

@@ -159,8 +159,8 @@ class _ParkingLotPageState extends State<ParkingLotPage> {
     );
   }
 
-  void parkingCard(BuildContext context,
-      ReservedParkingSlotDto availableParkingSlotDto) {
+  void parkingCard(
+      BuildContext context, ReservedParkingSlotDto availableParkingSlotDto) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => ParkingArrivalReceiptDialog(

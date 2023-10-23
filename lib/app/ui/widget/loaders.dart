@@ -35,6 +35,7 @@ class CircularLoading extends StatelessWidget {
     );
   }
 }
+
 void loadingIndicator(BuildContext context, String title) {
   showDialog(
     context: context,
