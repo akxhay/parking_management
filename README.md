@@ -40,6 +40,10 @@ testing purposes.
    flutter pub get
    ```
 
+4. Configure host name in [generic_constants.dart](https://github.com/akxhay/parking_management/blob/master/lib/app/data/constants/generic_constants.dart)
+
+   > static String host = "192.168.1.8:8080";
+
 ### Running the App
 
 1. Ensure an emulator or a physical device is connected.
