@@ -50,8 +50,14 @@ class ParkingLotResponseDto {
   List<FloorResponseDto> floors;
 
   factory ParkingLotResponseDto.fromJson(Map<String, dynamic> json) {
+    var id = json["id"];
+
+    if (id is String) {
+      id = int.tryParse(id) ?? 0;
+    }
+
     return ParkingLotResponseDto(
-        id: json["id"],
+        id: id,
         name: json["name"],
         floors: json["floors"] != null
             ? FloorResponseDto.fromJsonArray(json["floors"])
@@ -92,8 +98,13 @@ class FloorResponseDto {
   List<ParkingSlotDto> parkingSlots;
 
   factory FloorResponseDto.fromJson(Map<String, dynamic> json) {
+    var id = json["id"];
+
+    if (id is String) {
+      id = int.tryParse(id) ?? 0;
+    }
     return FloorResponseDto(
-        id: json["id"],
+        id: id,
         name: json["name"],
         parkingSlots: json["parkingSlots"] != null
             ? ParkingSlotDto.fromJsonArray(json["parkingSlots"])
@@ -140,8 +151,13 @@ class ParkingSlotDto {
   int? arrivedAt;
 
   factory ParkingSlotDto.fromJson(Map<String, dynamic> json) {
+    var id = json["id"];
+
+    if (id is String) {
+      id = int.tryParse(id) ?? 0;
+    }
     return ParkingSlotDto(
-        id: json["id"],
+        id: id,
         slotType: json["slotType"],
         slotNumber: json["slotNumber"],
         occupied: json["occupied"],
