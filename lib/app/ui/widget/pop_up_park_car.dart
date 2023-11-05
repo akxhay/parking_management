@@ -79,6 +79,7 @@ class ParkCarSelectionDialogState extends State<ParkCarSelectionDialog> {
               TextFormField(
                 initialValue: "",
                 keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.characters,
                 maxLength: 8,
                 validator: (value) {
                   if (value!.isEmpty || value.length < 8) {
