@@ -156,13 +156,18 @@ class ParkingSlotDto {
     if (id is String) {
       id = int.tryParse(id) ?? 0;
     }
+    var arrivedAt = json["arrivedAt"];
+
+    if (arrivedAt is String) {
+      arrivedAt = int.tryParse(arrivedAt) ?? 0;
+    }
     return ParkingSlotDto(
         id: id,
         slotType: json["slotType"],
         slotNumber: json["slotNumber"],
         occupied: json["occupied"],
         numberPlate: json["numberPlate"],
-        arrivedAt: json["arrivedAt"]);
+        arrivedAt: arrivedAt);
   }
 
   @override
@@ -209,14 +214,27 @@ class ReservedParkingSlotDto {
   int? arrivedAt;
 
   factory ReservedParkingSlotDto.fromJson(Map<String, dynamic> json) {
+    var slotId = json["id"];
+    var floorId = json["floorId"];
+    var arrivedAt = json["arrivedAt"];
+
+    if (slotId is String) {
+      slotId = int.tryParse(slotId) ?? 0;
+    }
+    if (floorId is String) {
+      floorId = int.tryParse(floorId) ?? 0;
+    }
+    if (arrivedAt is String) {
+      arrivedAt = int.tryParse(arrivedAt) ?? 0;
+    }
     return ReservedParkingSlotDto(
-        slotId: json["slotId"],
+        slotId: slotId,
         slotType: json["slotType"],
         slotNumber: json["slotNumber"],
-        floorId: json["floorId"],
-        floorName: json["floorName"],
+        floorId: floorId,
+        floorName: json["floorName"] ?? "Floor",
         numberPlate: json["numberPlate"],
-        arrivedAt: json["arrivedAt"]);
+        arrivedAt: arrivedAt);
   }
 
   @override

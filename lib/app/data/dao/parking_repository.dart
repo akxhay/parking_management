@@ -47,8 +47,8 @@ class ParkingRepository {
     log(url.toString());
     return await http.get(url, headers: <String, String>{
       'Content-Type': 'application/json',
-      'numberPlate': numberPlate,
-      'arrivedAt': DateTime.now().millisecondsSinceEpoch.toString()
+      'number-plate': numberPlate,
+      'arrived-at': DateTime.now().millisecondsSinceEpoch.toString()
     });
   }
 
